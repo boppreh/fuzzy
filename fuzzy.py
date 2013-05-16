@@ -28,6 +28,15 @@ def no(x): return 1 - x
 
 from collections import defaultdict
 def evaluate(rules, parameter):
+    """
+    Makes a decision from `rules` applied to `parameter`.
+
+    `rules` is a dictionary mapping fuzzy functions to dictionaries of numeric
+    outcomes. For example: {very(far): {'acceleration': 50, 'breaks': 0.0}}
+
+    All rules are evaluated to the given parameter, and the "center of mass" of
+    the total membership graphs is taken. The result is a composite rule.
+    """
     combined_command = defaultdict(lambda: 0.0)
     max_command = defaultdict(lambda: 0.0)
     for fuzzy_function, command in rules.items():
