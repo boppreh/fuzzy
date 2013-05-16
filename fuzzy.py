@@ -27,9 +27,9 @@ def no(x): return 1 - x
 
 
 from collections import defaultdict
-def evaluate(rules, parameter):
+def evaluate(rules, *parameters):
     """
-    Makes a decision from `rules` applied to `parameter`.
+    Makes a decision from `rules` applied to `parameters`.
 
     `rules` is a dictionary mapping fuzzy functions to dictionaries of numeric
     outcomes. For example: {very(far): {'acceleration': 50, 'breaks': 0.0}}
@@ -40,13 +40,15 @@ def evaluate(rules, parameter):
     combined_command = defaultdict(lambda: 0.0)
     max_command = defaultdict(lambda: 0.0)
     for fuzzy_function, command in rules.items():
-        fuzzy_value = fuzzy_function(parameter)
+        fuzzy_value = fuzzy_function(*parameters)
         for key, value in command.items():
             combined_command[key] += fuzzy_value * value
             max_command[key] += value
 
     final_command = defaultdict(lambda: 0.0)
     for key in combined_command:
+        if not max_command[key]:
+            continue
         final_command[key] = combined_command[key] / max_command[key]
     return final_command
 
@@ -61,6 +63,34 @@ def right_slope(x, a, b):
     return 1 - left_slope(x, a, b)
 
 if __name__ == '__main__':
+    ################
+    # Road example #
+    ################
+
+    angle = 25
+    snow_amount = 2
+
+    def straight():
+        return triangle(angle, -90, 0, 90)
+
+    def slippery():
+        return left_slope(snow_amount, 0, 3)
+        
+
+    rules = {
+        very(straight): {'acceleration': 0.9, 'brake': 0.0},
+        some(slippery): {'acceleration': 0.1, 'brake': 0.5}
+    }
+
+    results = evaluate(rules)
+    print 'Target acceleration:', results['acceleration']
+    print 'Target braking:', results['brake']
+
+
+    ##################
+    # Hacker Example #
+    ##################
+
     def parallel_requests(user):
         return left_slope(user['parallel requests'], 0, 5)
 
