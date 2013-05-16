@@ -1,6 +1,10 @@
 from __future__ import division
 
 def modifier(m):
+    """
+    Converts a numeric function into one that can wrap another function.
+    Example: modifier(lambda x: x * 2)(lambda x: x + 1)(4) -> 10.
+    """
     def wrapper(*fns):
         def caller(*args, **kwargs):
             return m(*[fn(*args, **kwargs) for fn in fns])
@@ -54,12 +58,27 @@ def evaluate(rules, *parameters):
 
 
 def triangle(x, a, b, c):
+    """
+    Returns the membership of x in a triangle made of a, b and c.
+    
+    The triangle has height 1 and peak at b.
+    """
     return max(0, min((x - a) / (b - a), (c - x) / (c - b)))
 
 def left_slope(x, a, b):
+    """
+    Returns the membership of x in a right facing slope graph.
+    _
+     \_
+    """
     return min(1, max(x - a, 0) / (b))
 
 def right_slope(x, a, b):
+    """
+    Returns the membership of x in a left facing slope graph.
+      _
+    _/
+    """
     return 1 - left_slope(x, a, b)
 
 if __name__ == '__main__':
